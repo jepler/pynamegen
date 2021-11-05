@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: 2021 Jeff Epler
+#
+# SPDX-License-Identifier: CC0-1.0
+
+/build
+/.coverage*
+/coverage.xml
+/dist
+/*.egg-info
+/htmlcov
+__pycache__
+*,cover
+/.reuse

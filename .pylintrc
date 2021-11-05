@@ -1,0 +1,13 @@
+#SPDX-FileCopyrightText: 2021 Jeff Epler
+#
+#SPDX-License-Identifier: GPL-3.0-only
+[MASTER]
+py-version=3.7
+
+[MESSAGES CONTROL]
+disable=duplicate-code,line-too-long,superfluous-parens
+
+[BASIC]
+argument-rgx=[a-z][a-z0-9_]*
+variable-naming-style=any
+good_names=dt,t,i,j,k,ex,_
