@@ -13,7 +13,7 @@ from gi.repository import Gtk  # pylint: disable=wrong-import-position
 from namegen import namegen  # pylint: disable=wrong-import-position
 
 
-def on_activate(app):  # pylint: disable=too-many-locals
+def on_activate(app):  # pylint: disable=too-many-locals,too-many-statements
     """Build the main application"""
     try:
         win = Gtk.ApplicationWindow(application=app)
@@ -79,6 +79,11 @@ def on_activate(app):  # pylint: disable=too-many-locals
         entry.set_entry_text_column(0)
         box.pack_start(entry, False, True, 0)
 
+        scroll = Gtk.ScrolledWindow()
+        scroll.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
+        scroll.set_min_content_height(320)
+        scroll.set_max_content_height(320)
+
         store = Gtk.ListStore(str)
         tree = Gtk.TreeView(model=store)
 
@@ -102,21 +107,31 @@ def on_activate(app):  # pylint: disable=too-many-locals
                     template = i[1]
                     entry.get_child().set_text(template)
             try:
-                names = [[namegen(template)] for i in range(10)]
+                names = [[namegen(template)] for i in range(20)]
             except Exception as e:  # pylint: disable=broad-except
                 names = [[str(e)]]
-            store.clear()
             for i in names:
                 store.append(i)
 
+        def regen():
+            store.clear()
+            gen()
+
         gen()
-        box.pack_start(tree, True, True, 0)
+        scroll.add(tree)
+        box.pack_start(scroll, True, True, 0)
 
-        button = Gtk.Button(label="Regenerate")
-        box.pack_start(button, False, True, 0)
-        button.connect("clicked", lambda _: gen())
+        def scrolled(w):
+            adj = w.get_adjustment()
+            value = adj.get_value()
+            page = adj.get_page_size()
+            margin = adj.get_upper() - 2 * page
+            if value > margin:
+                gen()
 
-        entry.connect("changed", lambda _: gen())
+        scroll.get_vscrollbar().connect("value-changed", scrolled)
+
+        entry.connect("changed", lambda _: regen())
         win.show_all()
         win.present()
 
